@@ -1,6 +1,6 @@
 // src/index.ts
 import { getSvgFiles, IconChange } from "./getSvgFiles";
-import { uploadIconSvg } from "./customVision"; // your Custom Vision code
+import { initTagsCache, uploadIconsSvg } from "./customVision"; // your Custom Vision code
 
 async function main() {
   console.log("===== Starting Icon Sync to Custom Vision =====");
@@ -20,12 +20,12 @@ async function main() {
   const { finalDeletes, finalAddsOrMods } = normalizeChanges(changes);
 
   // 2. Upload newly added/modified icons
-  for (const c of finalAddsOrMods) {
-    if (c.newFilePath) {
-      console.log(`Uploading ${c.newFilePath}`);
-      await uploadIconSvg(c.newFilePath);
-    }
-  }
+  await initTagsCache();
+  await uploadIconsSvg(
+    finalAddsOrMods
+      .map((c) => c.newFilePath)
+      .filter((path): path is string => Boolean(path))
+  );
 
   // Removed or renamed old versions
   if (finalDeletes.length > 0) {
