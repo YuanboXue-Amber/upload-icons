@@ -1,3 +1,6 @@
-SEARCH_ENDPOINT=https://<yourService>.search.windows.net
-SEARCH_API_KEY=<YourSearchAdminKey>
-SEARCH_INDEX_NAME=icons-index
+AZURE_SEARCH_ENDPOINT=https://<yourService>.search.windows.net
+AZURE_SEARCH_KEY=<YourSearchAdminKey>
+AZURE_SEARCH_INDEX_NAME=<YourIndexName>
+
+AZURE_VISION_ENDPOINT=https://<yourService>.cognitiveservices.azure.com/
+AZURE_VISION_KEY=<YourVisionKey>
