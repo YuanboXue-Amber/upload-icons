@@ -7,8 +7,8 @@ export type FileChangeStatus = "added" | "modified" | "deleted" | "renamed";
 
 export interface IconChange {
   status: FileChangeStatus;
-  oldFilePath?: string; // For "deleted" or the old side of a rename
-  newFilePath?: string; // For "added"/"modified" or the new side of a rename
+  oldFilePath?: string; // Relative path to git repo root. For "deleted" or the old side of a rename
+  newFilePath?: string; // Relative path to git repo root. For "added"/"modified" or the new side of a rename
 }
 
 export interface GitChangesResult {
@@ -44,7 +44,7 @@ export async function getSvgFiles(): Promise<GitChangesResult> {
   // If no old commit is found, it's effectively a "first run" => Return all SVGs
   if (!oldCommit) {
     console.log("No previous commit found. Will treat all icons as new.");
-    // We'll gather all .svg files in assets/ to treat them as "added."
+    // Gather all .svg files in assets/ to treat them as "added."
     const allSvgs = listAllSize20SvgFiles();
     changes = allSvgs.map((svgPath) => ({
       status: "added" as const,
@@ -63,7 +63,6 @@ export async function getSvgFiles(): Promise<GitChangesResult> {
   // Save the current HEAD as the new baseline
   saveLastCommitId(currentHead);
 
-  // Return the final results
   return {
     oldCommit,
     newCommit: currentHead,

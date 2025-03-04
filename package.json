@@ -4,19 +4,24 @@
   "description": "process and upload icons to custom vision project",
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js",
-    "update-icons": "node dist/index.js"
+    "update-icons:dev": "ts-node src/index.ts",
+    "update-icons:prod": "node dist/index.js",
+    "serve:dev": "ts-node src/server.ts"
   },
   "dependencies": {
-    "@azure/cognitiveservices-customvision-training": "^5.2.0",
-    "@azure/ms-rest-js": "^2.7.0",
+    "@azure/search-documents": "^12.1.0",
     "@types/node": "^22.13.8",
+    "axios": "^1.8.1",
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
     "sharp": "^0.33.5",
     "simple-git": "^3.27.0",
     "ts-node": "^10.9.2",
-    "tslib": "^2.8.1",
     "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12"
   }
 }

@@ -5,8 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "npm run dev",
-      "name": "Run npm dev",
+      "command": "npm run update-icons:dev",
+      "name": "Run npm update-icons:dev",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "npm run serve:dev",
+      "name": "Run npm run serve:dev",
       "request": "launch",
       "type": "node-terminal"
     }

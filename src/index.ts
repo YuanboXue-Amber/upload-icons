@@ -1,64 +1,55 @@
-// src/index.ts
-import { getSvgFiles, IconChange } from "./getSvgFiles";
-import { initTagsCache, uploadIconsSvg } from "./customVision"; // your Custom Vision code
+import { getSvgFiles } from "./getSvgFiles";
+import { indexIcons } from "./indexIcons";
+import { createIndex } from "./createIndex";
+import { AzureKeyCredential, SearchClient } from "@azure/search-documents";
+import {
+  AZURE_SEARCH_ENDPOINT,
+  AZURE_SEARCH_INDEX_NAME,
+  AZURE_SEARCH_KEY,
+} from "./envConstants";
+import { normalizeChanges } from "./utils";
 
 async function main() {
-  console.log("===== Starting Icon Sync to Custom Vision =====");
+  console.log("===== Starting Icon Sync =====");
 
-  // 1. Get the changes from Git
+  await createIndex();
+
+  // Get the changes from Git
   const { oldCommit, newCommit, changes } = await getSvgFiles();
 
   if (changes.length === 0) {
     console.log("No changes found. Exiting.");
     return;
   }
-
   console.log(
     `Found ${changes.length} changes (oldCommit = ${oldCommit}, newCommit = ${newCommit}).`
   );
 
   const { finalDeletes, finalAddsOrMods } = normalizeChanges(changes);
+  // Debug code:
+  // const finalAddsOrMods = [
+  //   "assets/Access Time/SVG/ic_fluent_access_time_20_filled.svg",
+  //   "assets/Checkmark Circle/SVG/ic_fluent_checkmark_circle_20_regular.svg",
+  // ];
 
-  // 2. Upload newly added/modified icons
-  await initTagsCache();
-  await uploadIconsSvg(
-    finalAddsOrMods
-      .map((c) => c.newFilePath)
-      .filter((path): path is string => Boolean(path))
+  const client = new SearchClient(
+    AZURE_SEARCH_ENDPOINT,
+    AZURE_SEARCH_INDEX_NAME,
+    new AzureKeyCredential(AZURE_SEARCH_KEY)
   );
-
-  // Removed or renamed old versions
-  if (finalDeletes.length > 0) {
-    // TODO: Implement deletion in Custom Vision
-    console.log(
-      "These icons were removed or renamed. Consider removing them in Custom Vision if desired:\n" +
-        finalDeletes.map((c) => ` - ${c.oldFilePath}`).join("\n")
-    );
+  const chunkSize = 500;
+  for (let i = 0; i < finalAddsOrMods.length; i += chunkSize) {
+    const chunk = finalAddsOrMods.slice(i, i + chunkSize);
+    await indexIcons(client, chunk);
   }
+
+  // // Removed or renamed old versions
+  // if (finalDeletes.length > 0) {
+  //   // TODO: Implement deletion
+  // }
 
   console.log("===== Icon Sync Complete =====");
 }
-
-const normalizeChanges = (changes: IconChange[]) => {
-  const addedOrModified: IconChange[] = [];
-  const deleted: IconChange[] = [];
-
-  changes.forEach((c) => {
-    if (c.status === "renamed") {
-      deleted.push({ status: "deleted", oldFilePath: c.oldFilePath });
-      addedOrModified.push({ status: "added", newFilePath: c.newFilePath });
-    } else if (c.status === "deleted") {
-      deleted.push(c);
-    } else {
-      addedOrModified.push(c);
-    }
-  });
-
-  return {
-    finalDeletes: deleted,
-    finalAddsOrMods: addedOrModified,
-  };
-};
 
 main().catch((err) => {
   console.error("Error in main:", err);
