@@ -1,0 +1,32 @@
+name: Update Fluent UI Icons
+
+on:
+  schedule:
+    - cron: "0 1 * * *" # Runs daily at 01:00 UTC
+  workflow_dispatch: # Allow manual trigger as well
+
+jobs:
+  update-icons:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out this repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Run update script
+        env:
+          CUSTOM_VISION_TRAINING_KEY: ${{ secrets.CUSTOM_VISION_TRAINING_KEY }}
+          CUSTOM_VISION_ENDPOINT: ${{ secrets.CUSTOM_VISION_ENDPOINT }}
+          CUSTOM_VISION_PROJECT_ID: ${{ secrets.CUSTOM_VISION_PROJECT_ID }}
+        run: npm run update-icons
