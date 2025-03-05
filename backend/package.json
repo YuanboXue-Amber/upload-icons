@@ -6,7 +6,8 @@
     "build": "rm -rf dist && tsc",
     "update-icons:dev": "ts-node src/index.ts",
     "update-icons:prod": "node dist/index.js",
-    "serve:dev": "ts-node src/server.ts"
+    "serve:dev": "ts-node src/server.ts",
+    "serve:prod": "node dist/server.js"
   },
   "dependencies": {
     "@azure/search-documents": "^12.1.0",

@@ -22,12 +22,15 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
+        working-directory: backend
         run: npm install
 
       - name: Build
+        working-directory: backend
         run: npm run build
 
       - name: Run update script
+        working-directory: backend
         env:
           AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
           AZURE_SEARCH_KEY: ${{ secrets.AZURE_SEARCH_KEY }}
@@ -42,6 +45,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Check if file changed
+        working-directory: backend
         id: check_changes
         run: |
           if git diff --quiet HEAD -- last_commit; then
@@ -53,6 +57,7 @@ jobs:
           fi
 
       - name: Commit and push file
+        working-directory: backend
         if: env.changed == 'true'
         run: |
           git add last_commit
