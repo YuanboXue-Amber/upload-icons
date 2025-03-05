@@ -36,6 +36,11 @@ jobs:
           AZURE_VISION_KEY: ${{ secrets.AZURE_VISION_KEY }}
         run: npm run update-icons:prod
 
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Check if file changed
         id: check_changes
         run: |
