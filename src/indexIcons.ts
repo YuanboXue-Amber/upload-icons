@@ -1,6 +1,7 @@
 import { SearchClient } from "@azure/search-documents";
 import { rasterizeIcon } from "./utils";
 import { getImageEmbedding } from "./getImageEmbedding";
+import { RAW_REPO_URL_BASE } from "./constants";
 
 /**
  * Processes and uploads all icons to Azure AI Search
@@ -24,6 +25,7 @@ export async function indexIcons(
         id: iconPathToKey(iconPath),
         name: iconName,
         variant,
+        url: `${RAW_REPO_URL_BASE}/${iconPath}`,
         vector,
       });
 

@@ -21,6 +21,7 @@ export async function createIndex() {
       { name: "id", type: "Edm.String", key: true },
       { name: "name", type: "Edm.String", filterable: true },
       { name: "variant", type: "Edm.String", filterable: true },
+      { name: "url", type: "Edm.String", filterable: true },
       {
         name: "vector",
         type: "Collection(Edm.Single)",
@@ -40,12 +41,8 @@ export async function createIndex() {
     },
   };
 
-  const exist = await client.getIndex(AZURE_SEARCH_INDEX_NAME);
-  if (exist) {
-    console.log(`✅ Index '${AZURE_SEARCH_INDEX_NAME}' exists!`);
-    return;
-  }
-
-  await client.createIndex(index);
-  console.log(`✅ Index '${AZURE_SEARCH_INDEX_NAME}' created successfully!`);
+  await client.createOrUpdateIndex(index);
+  console.log(
+    `✅ Index '${AZURE_SEARCH_INDEX_NAME}' created/updated successfully!`
+  );
 }
