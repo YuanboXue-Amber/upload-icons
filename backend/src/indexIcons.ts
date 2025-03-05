@@ -1,7 +1,9 @@
 import { SearchClient } from "@azure/search-documents";
-import { rasterizeIcon } from "./utils";
+import * as fs from "fs/promises";
+import * as path from "path";
+import { LOCAL_REPO_DIR, RAW_REPO_URL_BASE } from "./constants";
 import { getImageEmbedding } from "./getImageEmbedding";
-import { RAW_REPO_URL_BASE } from "./constants";
+import { rasterize } from "./rasterize";
 
 /**
  * Processes and uploads all icons to Azure AI Search
@@ -15,7 +17,9 @@ export async function indexIcons(
   const documents = [];
   for (const iconPath of iconPaths) {
     try {
-      const imageBuffer = await rasterizeIcon(iconPath);
+      const imageBuffer = await rasterize(
+        await fs.readFile(path.join(LOCAL_REPO_DIR, iconPath))
+      );
       const vector = await getImageEmbedding(imageBuffer);
 
       const iconName = iconPath.split("/")[1];

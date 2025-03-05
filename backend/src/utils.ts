@@ -1,8 +1,4 @@
 import { IconChange } from "./getSvgFiles";
-import * as fs from "fs/promises";
-import * as path from "path";
-import { LOCAL_REPO_DIR } from "./constants";
-import * as sharp from "sharp";
 
 export const normalizeChanges = (changes: IconChange[]) => {
   const addedOrModified: string[] = [];
@@ -23,18 +19,4 @@ export const normalizeChanges = (changes: IconChange[]) => {
     finalDeletes: deleted,
     finalAddsOrMods: addedOrModified,
   };
-};
-
-export const rasterizeIcon = async (iconPath: string) => {
-  const svgData = await fs.readFile(path.join(LOCAL_REPO_DIR, iconPath));
-
-  // Convert SVG → PNG in-memory (white background)
-  const pngBuffer = await sharp(svgData)
-    .resize(128, 128, {
-      fit: "contain",
-    })
-    .flatten({ background: { r: 255, g: 255, b: 255, alpha: 1 } })
-    .toBuffer();
-
-  return pngBuffer;
 };
