@@ -34,7 +34,7 @@ jobs:
           AZURE_SEARCH_INDEX_NAME: ${{ secrets.AZURE_SEARCH_INDEX_NAME }}
           AZURE_VISION_ENDPOINT: ${{ secrets.AZURE_VISION_ENDPOINT }}
           AZURE_VISION_KEY: ${{ secrets.AZURE_VISION_KEY }}
-        run: npm run update-icons
+        run: npm run update-icons:prod
 
       - name: Check if file changed
         id: check_changes
