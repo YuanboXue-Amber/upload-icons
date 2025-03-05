@@ -1,7 +1,7 @@
 import * as path from "path";
 
 export const REPO_URL =
-  "https://github.com/yuanboxue-amber/fluentui-system-icons.git"; // TODO: Update this URL to the microsoft repo.
+  "https://github.com/microsoft/fluentui-system-icons.git";
 
 // Store the repo under temp/fluentui-system-icons.
 export const LOCAL_REPO_DIR = path.join(
