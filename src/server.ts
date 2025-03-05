@@ -9,6 +9,7 @@ import {
   AZURE_SEARCH_INDEX_NAME,
 } from "./envConstants";
 import { getImageEmbedding } from "./getImageEmbedding";
+import { url } from "inspector";
 
 dotenv.config();
 
@@ -72,10 +73,15 @@ app.post(
       // Format and return results
       const topMatches = [];
       for await (const result of searchResults.results) {
-        const document = result.document as { name: string; variant: string };
+        const document = result.document as {
+          name: string;
+          variant: string;
+          url: string;
+        };
         topMatches.push({
           name: document.name,
           variant: document.variant,
+          url: document.url,
         });
       }
 
