@@ -26,11 +26,6 @@ async function main() {
   );
 
   const { finalDeletes, finalAddsOrMods } = normalizeChanges(changes);
-  // Debug code:
-  // const finalAddsOrMods = [
-  //   "assets/Access Time/SVG/ic_fluent_access_time_20_filled.svg",
-  //   "assets/Checkmark Circle/SVG/ic_fluent_checkmark_circle_20_regular.svg",
-  // ];
 
   const client = new SearchClient(
     AZURE_SEARCH_ENDPOINT,

@@ -12,4 +12,4 @@ export const LOCAL_REPO_DIR = path.join(
 );
 
 // Store the last commit of icon repo that was processed.
-export const LAST_COMMIT_FILE = path.join(__dirname, "last_commit");
+export const LAST_COMMIT_FILE = path.join(__dirname, "..", "last_commit");
