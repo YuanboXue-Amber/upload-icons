@@ -2,8 +2,11 @@ name: Update Fluent UI Icons
 
 on:
   schedule:
-    - cron: "0 1 * * *" # Runs daily at 01:00 UTC
+    - cron: "0 0 * * 1" # Runs every Monday at 00:00 UTC
   workflow_dispatch: # Allow manual trigger as well
+
+permissions:
+  contents: write # Allows GitHub Actions to commit changes
 
 jobs:
   update-icons:
@@ -26,7 +29,27 @@ jobs:
 
       - name: Run update script
         env:
-          CUSTOM_VISION_TRAINING_KEY: ${{ secrets.CUSTOM_VISION_TRAINING_KEY }}
-          CUSTOM_VISION_ENDPOINT: ${{ secrets.CUSTOM_VISION_ENDPOINT }}
-          CUSTOM_VISION_PROJECT_ID: ${{ secrets.CUSTOM_VISION_PROJECT_ID }}
+          AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
+          AZURE_SEARCH_KEY: ${{ secrets.AZURE_SEARCH_KEY }}
+          AZURE_SEARCH_INDEX_NAME: ${{ secrets.AZURE_SEARCH_INDEX_NAME }}
+          AZURE_VISION_ENDPOINT: ${{ secrets.AZURE_VISION_ENDPOINT }}
+          AZURE_VISION_KEY: ${{ secrets.AZURE_VISION_KEY }}
         run: npm run update-icons
+
+      - name: Check if file changed
+        id: check_changes
+        run: |
+          if git diff --quiet HEAD -- last_commit; then
+            echo "No changes detected. Skipping commit."
+            echo "changed=false" >> $GITHUB_ENV
+          else
+            echo "File has changed. Proceeding with commit."
+            echo "changed=true" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and push file
+        if: env.changed == 'true'
+        run: |
+          git add last_commit
+          git commit -m "[GH Action] Auto-update last_commit"
+          git push origin main
