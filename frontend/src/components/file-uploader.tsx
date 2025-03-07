@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import {
   makeStyles,
@@ -8,6 +8,7 @@ import {
   Button,
   Text,
   shorthands,
+  Image,
 } from "@fluentui/react-components";
 
 import {
@@ -78,12 +79,43 @@ const useStyles = makeStyles({
     minWidth: "32px",
     height: "32px",
   },
+
+  previewContainer: {
+    ...shorthands.padding(tokens.spacingVerticalM),
+    ...shorthands.border(
+      tokens.strokeWidthThin,
+      "solid",
+      tokens.colorNeutralStroke1
+    ),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    marginBottom: tokens.spacingVerticalL,
+  },
+  previewLabel: {
+    marginBottom: tokens.spacingVerticalS,
+  },
+  previewImageWrapper: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  previewImage: {
+    position: "relative",
+    height: "160px",
+    width: "160px",
+    ...shorthands.border(
+      tokens.strokeWidthThin,
+      "solid",
+      tokens.colorNeutralStroke1
+    ),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    overflow: "hidden",
+  },
 });
 
 export function FileUploader({ onFileChange }: FileUploaderProps) {
   const styles = useStyles();
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [filePreview, setFilePreview] = useState<string>("");
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -91,10 +123,22 @@ export function FileUploader({ onFileChange }: FileUploaderProps) {
         const selectedFile = acceptedFiles[0];
         setFile(selectedFile);
         onFileChange(selectedFile);
+
+        // Create a blob URL
+        const objectUrl = URL.createObjectURL(selectedFile);
+        setFilePreview(objectUrl);
       }
     },
     [onFileChange]
   );
+
+  useEffect(() => {
+    return () => {
+      if (filePreview && filePreview.startsWith("blob:")) {
+        URL.revokeObjectURL(filePreview);
+      }
+    };
+  }, [filePreview]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -139,6 +183,23 @@ export function FileUploader({ onFileChange }: FileUploaderProps) {
             className={styles.removeButton}
             aria-label='Remove file'
           />
+        </div>
+      )}
+
+      {file && filePreview && (
+        <div className={styles.previewContainer}>
+          <Text className={styles.previewLabel} size={200} weight='semibold'>
+            Image Preview:
+          </Text>
+          <div className={styles.previewImageWrapper}>
+            <div className={styles.previewImage}>
+              <Image
+                src={filePreview || "/placeholder.svg"}
+                alt='File preview'
+                fit='contain'
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
